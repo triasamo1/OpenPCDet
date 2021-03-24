@@ -58,7 +58,7 @@ MODEL:
         NUM_FILTERS: [64]
 
     MAP_TO_BEV:
-        NAME: PointPillarScatter
+        NAME: PointPillarScatter_trias
         NUM_BEV_FEATURES: 64
 
     BACKBONE_2D:
