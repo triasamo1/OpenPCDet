@@ -117,7 +117,7 @@ MODEL:
             SAMPLE_SIZE: 512
             NORM_BY_NUM_EXAMPLES: False
             MATCH_HEIGHT: False
-            BOX_CODER: ResidualCoder
+            BOX_CODER: ResidualCoder_trias
 
         LOSS_CONFIG:
             LOSS_WEIGHTS: {
