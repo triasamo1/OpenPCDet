@@ -70,7 +70,7 @@ MODEL:
         NUM_UPSAMPLE_FILTERS: [128, 128, 128]
 
     DENSE_HEAD:
-        NAME: AnchorHeadSingle
+        NAME: AnchorHeadSingle_trias
         CLASS_AGNOSTIC: False
 
         USE_DIRECTION_CLASSIFIER: True
