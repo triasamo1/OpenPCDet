@@ -112,7 +112,7 @@ MODEL:
         ]
 
         TARGET_ASSIGNER_CONFIG:
-            NAME: AxisAlignedTargetAssigner
+            NAME: AxisAlignedTargetAssigner_trias
             POS_FRACTION: -1.0
             SAMPLE_SIZE: 512
             NORM_BY_NUM_EXAMPLES: False
