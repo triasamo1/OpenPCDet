@@ -6,12 +6,14 @@ from pcdet.utils import common_utils
 
 from .dataset import DatasetTemplate
 from .kitti.kitti_dataset import KittiDataset
+from .kitti.kitti_dataset_trias import KittiDataset_trias
 from .nuscenes.nuscenes_dataset import NuScenesDataset
 from .waymo.waymo_dataset import WaymoDataset
 
 __all__ = {
     'DatasetTemplate': DatasetTemplate,
     'KittiDataset': KittiDataset,
+    'KittiDataset_trias': KittiDataset_trias,
     'NuScenesDataset': NuScenesDataset,
     'WaymoDataset': WaymoDataset
 }
