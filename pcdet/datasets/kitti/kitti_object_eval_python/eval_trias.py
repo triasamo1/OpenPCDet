@@ -368,7 +368,7 @@ def compute_statistics_jit_trias(overlaps,
             thresholds[thresh_idx] = dt_scores[det_idx]
 
             # trias - create an empty list for bbox distance data ####################################################################
-            center_data = [gt_3D_bboxes[i,0], gt_3D_bboxes[i,1], gt_3D_bboxes[i,2], dt_3D_bboxes[det_idx,0], dt_3D_bboxes[det_idx,1], dt_3D_bboxes[det_idx,2], class_name, difficulty]
+            center_data = [gt_3D_bboxes[i,0], gt_3D_bboxes[i,1], gt_3D_bboxes[i,2], dt_3D_bboxes[det_idx,0], dt_3D_bboxes[det_idx,1], dt_3D_bboxes[det_idx,2], class_name, difficulty, dt_scores[det_idx]]
             #list_center_data.append(center_data)
             list_center_data = list_center_data + center_data
 
@@ -574,9 +574,9 @@ def _prepare_data(gt_annos, dt_annos, current_class, difficulty):
         total_num_valid_gt += num_valid_gt
         # trias - modified to carry the 3d bbox location
         gt_datas = np.concatenate(
-            [gt_annos[i]["bbox"], gt_annos[i]["alpha"][..., np.newaxis],gt_annos[i]['location']], 1)
+            [gt_annos[i]["bbox"], gt_annos[i]["alpha"][..., np.newaxis],gt_annos[i]["location"]], 1)
         dt_datas = np.concatenate([
-            dt_annos[i]["bbox"], dt_annos[i]["alpha"][..., np.newaxis],dt_annos[i]['location'],
+            dt_annos[i]["bbox"], dt_annos[i]["alpha"][..., np.newaxis],dt_annos[i]["location"],
             dt_annos[i]["score"][..., np.newaxis]
         ], 1)
         gt_datas_list.append(gt_datas)
@@ -623,19 +623,6 @@ def eval_class(gt_annos,
         [num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS])
     aos = np.zeros([num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS])
 
-    # gather all data - trias
-    # loc = np.concatenate([a["location"] for a in gt_annos_part], 0)
-    # dims = np.concatenate([a["dimensions"] for a in gt_annos_part], 0)
-    # rots = np.concatenate([a["rotation_y"] for a in gt_annos_part], 0)
-    # gt_boxes = np.concatenate(
-    #     [loc, dims, rots[..., np.newaxis]], axis=1)
-    # loc = np.concatenate([a["location"] for a in dt_annos_part], 0)
-    # dims = np.concatenate([a["dimensions"] for a in dt_annos_part], 0)
-    # rots = np.concatenate([a["rotation_y"] for a in dt_annos_part], 0)
-    # dt_boxes = np.concatenate(
-    #     [loc, dims, rots[..., np.newaxis]], axis=1)
-    # overlap_part = d3_box_overlap(gt_boxes, dt_boxes).astype(
-    #     np.float64)
     list_gather_all=[]
 
     for m, current_class in enumerate(current_classes):
@@ -714,8 +701,8 @@ def eval_class(gt_annos,
 
     with open('/home/rose/center_data.csv', 'w', newline='') as file:  # trias write to csv
         writer = csv.writer(file)
-        for i in range(0,len(list_gather_all),8):
-            writer.writerow([list_gather_all[i:i+8]])
+        for i in range(0,len(list_gather_all),9):
+            writer.writerow([list_gather_all[i:i+9]])
 
     return ret_dict
 

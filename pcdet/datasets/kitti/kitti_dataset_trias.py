@@ -1,5 +1,6 @@
 import copy
 import pickle
+import csv
 
 import numpy as np
 from skimage import io
@@ -327,6 +328,7 @@ class KittiDataset_trias(DatasetTemplate):
 
         eval_det_annos = copy.deepcopy(det_annos)
         eval_gt_annos = [copy.deepcopy(info['annos']) for info in self.kitti_infos]
+        
         ap_result_str, ap_dict = kitti_eval.get_official_eval_result(eval_gt_annos, eval_det_annos, class_names)
 
         return ap_result_str, ap_dict
@@ -384,7 +386,7 @@ class KittiDataset_trias(DatasetTemplate):
 
 
 def create_kitti_infos(dataset_cfg, class_names, data_path, save_path, workers=4):
-    dataset = KittiDataset(dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path, training=False)
+    dataset = KittiDataset_trias(dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path, training=False) ## trias was KIttiDataset
     train_split, val_split = 'train', 'val'
 
     train_filename = save_path / ('kitti_infos_%s.pkl' % train_split)
