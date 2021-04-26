@@ -9,6 +9,7 @@ import torch
 import torch.distributed as dist
 import torch.nn as nn
 from tensorboardX import SummaryWriter
+from torch.utils.data import DataLoader,Dataset
 
 from pcdet.config import cfg, cfg_from_list, cfg_from_yaml_file, log_config_to_file
 from pcdet.datasets import build_dataloader
@@ -16,6 +17,11 @@ from pcdet.models import build_network, model_fn_decorator
 from pcdet.utils import common_utils
 from train_utils.optimization import build_optimizer, build_scheduler
 from train_utils.train_utils import train_model
+
+from icecream import ic
+import time
+from tqdm import tqdm
+from pcdet.models import load_data_to_gpu
 
 
 def parse_config():
@@ -112,6 +118,38 @@ def main():
         total_epochs=args.epochs
     )
 
+    logger.info('**********************Starting Inference on Pointpillars**********************')
+    
+    # Load model to GPU and deactivate gradients
+    MODEL_PATH = '/home/triasamo/entire_model.pth'
+    model_point = torch.load(MODEL_PATH)
+    model_point.cuda()
+    model_point.eval()
+    
+    start_time = time.time()
+    all_predictions = []
+    with torch.no_grad():
+        for data_dict in tqdm(train_loader):
+            load_data_to_gpu(data_dict)
+            # feed point cloud into model 
+            predictions, _ = model_point(data_dict) # returns a list of dictionaries (one for each frame fed into the model)
+            for index, pred_dict in enumerate(predictions):                         
+                # Sort out predictions into boxes, scores, labels and centers
+                frame_id = data_dict['frame_id'][index]
+                pred_boxes = pred_dict['pred_boxes'].cpu().numpy()
+                pred_scores = pred_dict['pred_scores'].cpu().numpy()
+                pred_labels = pred_dict['pred_labels'].cpu().numpy()
+                pred_centers = pred_boxes[:,:3]
+                frame_dict = {'frame_id': frame_id, 'pred_centers': pred_centers, 'pred_scores': pred_scores, 'pred_labels': pred_labels}
+                all_predictions.append(frame_dict) 
+    logger.info("Inferece of dataset executed in: %.2f sec" % (time.time() - start_time))
+       
+    #for idx, data_dict in enumerate(dataloader_extra):
+    #    ic(data_dict.keys())
+    #    dict_keys(['points', 'frame_id', 'gt_boxes', 'use_lead_xyz', 'voxels', 'voxel_coords', 'voxel_num_points', 'image_shape', 'batch_size'])
+    
+    logger.info('**********************Finished Inference on Pointpillars**********************')
+    
     model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=train_set)
     if args.sync_bn:
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
@@ -172,9 +210,9 @@ def main():
 
     logger.info('**********************End training %s/%s(%s)**********************\n\n\n'
                 % (cfg.EXP_GROUP_PATH, cfg.TAG, args.extra_tag))
-
-    logger.info('**********************Start evaluation %s/%s(%s)**********************' %
-                (cfg.EXP_GROUP_PATH, cfg.TAG, args.extra_tag))
+    logger.info('************** Saving Entire model  **************\n\n\n')
+    torch.save(model, '/home/triasamo/entire_model.pth')
+    logger.info('************** Saved model at /home/triasamo/entire_model.pth  **************\n\n\n')
     test_set, test_loader, sampler = build_dataloader(
         dataset_cfg=cfg.DATA_CONFIG,
         class_names=cfg.CLASS_NAMES,

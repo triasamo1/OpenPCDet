@@ -1,7 +1,7 @@
 CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG: 
-    _BASE_CONFIG_: cfgs/dataset_configs/kitti_dataset.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/kitti_dataset_trias.yaml
     POINT_CLOUD_RANGE: [0, -39.68, -3, 69.12, 39.68, 1]
     DATA_PROCESSOR:
         - NAME: mask_points_and_boxes_outside_range
@@ -46,6 +46,8 @@ DATA_CONFIG:
 
             - NAME: random_world_scaling
               WORLD_SCALE_RANGE: [0.95, 1.05]
+              
+            - NAME: extract_pointpillars_centers
 
 MODEL:
     NAME: PointPillar_trias

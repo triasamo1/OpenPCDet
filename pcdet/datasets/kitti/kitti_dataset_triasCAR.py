@@ -8,10 +8,9 @@ from skimage import io
 from ...ops.roiaware_pool3d import roiaware_pool3d_utils
 from ...utils import box_utils, calibration_kitti, common_utils, object3d_kitti
 from ..dataset import DatasetTemplate
-from icecream import ic
 
 
-class KittiDataset_trias(DatasetTemplate):
+class KittiDataset_triasCAR(DatasetTemplate):
     def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None):
         """
         Args:
@@ -325,7 +324,7 @@ class KittiDataset_trias(DatasetTemplate):
         if 'annos' not in self.kitti_infos[0].keys():
             return None, {}
 
-        from .kitti_object_eval_python import eval_trias as kitti_eval ############################## trias=
+        from .kitti_object_eval_python import eval_triasCAR as kitti_eval ############################## trias=
         eval_det_annos = copy.deepcopy(det_annos)
         eval_gt_annos = [copy.deepcopy(info['annos']) for info in self.kitti_infos]
         
@@ -378,7 +377,7 @@ class KittiDataset_trias(DatasetTemplate):
             road_plane = self.get_road_plane(sample_idx)
             if road_plane is not None:
                 input_dict['road_plane'] = road_plane
-        
+
         data_dict = self.prepare_data(data_dict=input_dict)
 
         data_dict['image_shape'] = img_shape

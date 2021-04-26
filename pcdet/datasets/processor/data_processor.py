@@ -40,7 +40,7 @@ class DataProcessor(object):
 
         return data_dict
 
-    def transform_points_to_voxels(self, data_dict=None, config=None, voxel_generator=None):
+    def transform_points_to_voxels(self, data_dict=None, config=None, voxel_generator=None):        
         if data_dict is None:
             try:
                 from spconv.utils import VoxelGeneratorV2 as VoxelGenerator
@@ -57,7 +57,7 @@ class DataProcessor(object):
             self.grid_size = np.round(grid_size).astype(np.int64)
             self.voxel_size = config.VOXEL_SIZE
             return partial(self.transform_points_to_voxels, voxel_generator=voxel_generator)
-
+        
         points = data_dict['points']
         voxel_output = voxel_generator.generate(points)
         if isinstance(voxel_output, dict):
@@ -88,7 +88,6 @@ class DataProcessor(object):
             pts_near_flag = pts_depth < 40.0
             far_idxs_choice = np.where(pts_near_flag == 0)[0]
             near_idxs = np.where(pts_near_flag == 1)[0]
-            near_idxs_choice = np.random.choice(near_idxs, num_points - len(far_idxs_choice), replace=False)
             choice = []
             if num_points > len(far_idxs_choice):
                 near_idxs_choice = np.random.choice(near_idxs, num_points - len(far_idxs_choice), replace=False)

@@ -8,6 +8,8 @@ from ..utils import common_utils
 from .augmentor.data_augmentor import DataAugmentor
 from .processor.data_processor import DataProcessor
 from .processor.point_feature_encoder import PointFeatureEncoder
+from .center_extractor.center_extractor import CenterExtractor
+from icecream import ic
 
 
 class DatasetTemplate(torch_data.Dataset):
@@ -33,6 +35,11 @@ class DatasetTemplate(torch_data.Dataset):
         self.data_processor = DataProcessor(
             self.dataset_cfg.DATA_PROCESSOR, point_cloud_range=self.point_cloud_range, training=self.training
         )
+        
+        # trias
+        #self.center_extractor = CenterExtractor(
+        #    self.dataset_cfg.CENTER_EXTRACTOR, training=self.training, run_once = self.run_once
+        #)
 
         self.grid_size = self.data_processor.grid_size
         self.voxel_size = self.data_processor.voxel_size
@@ -91,6 +98,7 @@ class DatasetTemplate(torch_data.Dataset):
         Returns:
 
         """
+        # trias !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
         raise NotImplementedError
 
     def prepare_data(self, data_dict):
@@ -117,7 +125,6 @@ class DatasetTemplate(torch_data.Dataset):
         if self.training:
             assert 'gt_boxes' in data_dict, 'gt_boxes should be provided for training'
             gt_boxes_mask = np.array([n in self.class_names for n in data_dict['gt_names']], dtype=np.bool_)
-
             data_dict = self.data_augmentor.forward(
                 data_dict={
                     **data_dict,
@@ -138,6 +145,11 @@ class DatasetTemplate(torch_data.Dataset):
         data_dict = self.data_processor.forward(
             data_dict=data_dict
         )
+        
+        # trias
+        #data_dict = self.center_extractor.forward(
+        #    data_dict=data_dict
+        #)
 
         if self.training and len(data_dict['gt_boxes']) == 0:
             new_index = np.random.randint(self.__len__())
@@ -155,7 +167,6 @@ class DatasetTemplate(torch_data.Dataset):
                 data_dict[key].append(val)
         batch_size = len(batch_list)
         ret = {}
-
         for key, val in data_dict.items():
             try:
                 if key in ['voxels', 'voxel_num_points']:
@@ -180,3 +191,7 @@ class DatasetTemplate(torch_data.Dataset):
 
         ret['batch_size'] = batch_size
         return ret
+
+
+        
+        

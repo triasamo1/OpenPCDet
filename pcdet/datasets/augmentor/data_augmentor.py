@@ -77,6 +77,7 @@ class DataAugmentor(object):
         data_dict['gt_boxes'] = gt_boxes
         data_dict['points'] = points
         return data_dict
+    
 
     def forward(self, data_dict):
         """
@@ -89,9 +90,10 @@ class DataAugmentor(object):
 
         Returns:
         """
+
         for cur_augmentor in self.data_augmentor_queue:
             data_dict = cur_augmentor(data_dict=data_dict)
-
+        
         data_dict['gt_boxes'][:, 6] = common_utils.limit_period(
             data_dict['gt_boxes'][:, 6], offset=0.5, period=2 * np.pi
         )
@@ -104,4 +106,6 @@ class DataAugmentor(object):
             data_dict['gt_boxes'] = data_dict['gt_boxes'][gt_boxes_mask]
             data_dict['gt_names'] = data_dict['gt_names'][gt_boxes_mask]
             data_dict.pop('gt_boxes_mask')
+        
+
         return data_dict

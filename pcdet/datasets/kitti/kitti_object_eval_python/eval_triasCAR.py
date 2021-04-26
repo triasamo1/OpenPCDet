@@ -345,26 +345,14 @@ def compute_statistics_jit_trias(overlaps,
             overlap = overlaps[j, i]
             dt_score = dt_scores[j]
 
+            # # # trias - create an empty list for bbox distance data ####################################################################
             
-            #center_data_raw = [gt_3D_bboxes[i,0], gt_3D_bboxes[i,1], gt_3D_bboxes[i,2], dt_3D_bboxes[j,0], dt_3D_bboxes[j,1], dt_3D_bboxes[j,2], class_name, dt_scores[j], frame_id]
-            #if (class_name == 0):
-            #  if (center_data_raw not in temp_list):
-            #    temp_list.append(center_data_raw)
-            #    list_center_data_raw = list_center_data_raw + center_data_raw
-            #elif (class_name == 1):
-            #  temp_center_data_raw = [dt_3D_bboxes[j,0], dt_3D_bboxes[j,1], dt_3D_bboxes[j,2], 0, dt_scores[j], frame_id]
-            #  if next((False for line in temp_list if temp_center_data_raw == line[3:]), True): #if you didn't find previous registration as car then append it
-            #    if (center_data_raw not in temp_list):
-            #      temp_list.append(center_data_raw)
-            #      list_center_data_raw = list_center_data_raw + center_data_raw
-            #else:
-            #  temp_center_data_raw = [dt_3D_bboxes[j,0], dt_3D_bboxes[j,1], dt_3D_bboxes[j,2], 1, dt_scores[j], frame_id]
-            #  if next((False for line in temp_list if temp_center_data_raw == line[3:]), True): #if you didn't find previous registration as car then append it
-            #    temp_center_data_raw = [dt_3D_bboxes[j,0], dt_3D_bboxes[j,1], dt_3D_bboxes[j,2], 0, dt_scores[j], frame_id]
-            #    if next((False for line in temp_list if temp_center_data_raw == line[3:]), True): #if you didn't find previous registration as car then append it
-            #      if (center_data_raw not in temp_list):
-            #        temp_list.append(center_data_raw)
-            #        list_center_data_raw = list_center_data_raw + center_data_raw
+            center_data_raw = [gt_3D_bboxes[i,0], gt_3D_bboxes[i,1], gt_3D_bboxes[i,2], dt_3D_bboxes[j,0], dt_3D_bboxes[j,1], dt_3D_bboxes[j,2], class_name, dt_scores[j], frame_id]
+            if (class_name == 0):
+              if (center_data_raw not in temp_list):
+                temp_list.append(center_data_raw)
+                list_center_data_raw = list_center_data_raw + center_data_raw
+
 
             if (not compute_fp and (overlap > min_overlap)
                     and dt_score > valid_detection):
@@ -844,17 +832,11 @@ def eval_class_trias(gt_annos,
         "orientation": aos,
     }
 
-    # with open('/home/triasamo/center_data.csv', 'w', newline='') as file:  # trias write to csv
-    #     writer = csv.writer(file)
-    #     # a=[' len(gt_annos): {0}'.format(len(gt_annos)), ' len(dt_annos): {0}'.format(len(dt_annos)), ' gt_datas_list[0]: {0}'.format(len(gt_datas_list[0])), ' dt_datas_list[0]: {0}'.format(len(dt_datas_list[0]))]
-    #     # writer.writerow(a)
-    #     for i in range(0,len(list_gather_all),10):
-    #         writer.writerow([list_gather_all[i:i+10]])
     
-    #with open('/home/triasamo/pointpillars_loc3_clsagnostic.csv', 'w', newline='') as file:  # trias write to csv
-    #    writer = csv.writer(file)
-    #    for i in range(0,len(list_gather_all_raw),9):
-    #        writer.writerow([list_gather_all_raw[i:i+9]])
+    with open('/home/triasamo/pointpillars_cls2_xyz_CAR.csv', 'w', newline='') as file:  # trias write to csv
+        writer = csv.writer(file)
+        for i in range(0,len(list_gather_all_raw),9):
+            writer.writerow([list_gather_all_raw[i:i+9]])
 
     return ret_dict
 
